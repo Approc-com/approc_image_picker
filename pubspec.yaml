@@ -1,0 +1,19 @@
+name: approc_image_picker
+description: Pick and crop a document, then rotate, resize, and compress it to a JPEG.
+version: 1.0.0
+homepage: https://github.com/NASO7Y/ocr_egyptian_ID
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cunning_document_scanner: ^3.0.1
+  image: ^4.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
