@@ -1,6 +1,6 @@
 name: approc_image_picker
 description: Pick and crop a document, then rotate, resize, and compress it to a JPEG.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/NASO7Y/ocr_egyptian_ID
 
 environment:

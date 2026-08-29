@@ -7,6 +7,7 @@ import 'package:image/image.dart' as img;
 
 import 'prepare_jpeg.dart';
 import 'prepare_sheet.dart';
+import 'prepare_theme.dart';
 
 /// Camera or gallery. Cropping is handled by the document scanner.
 enum PreparedImageSource { camera, gallery }
@@ -39,14 +40,16 @@ class PreparedImage {
 }
 
 /// Pick → crop → rotate/resize/compress sheet → JPEG.
-class PreparedImagePicker {
-  const PreparedImagePicker({
+class ApprocImagePicker {
+  const ApprocImagePicker({
     this.maxDimension = kDefaultMaxDimension,
     this.jpegQuality = kDefaultJpegQuality,
+    this.theme = const ImagePrepareTheme(),
   });
 
   final int maxDimension;
   final int jpegQuality;
+  final ImagePrepareTheme theme;
 
   /// Opens camera or gallery with crop, then the prepare sheet.
   ///
@@ -66,6 +69,7 @@ class PreparedImagePicker {
       bytes,
       maxDimension: maxDimension,
       jpegQuality: jpegQuality,
+      theme: theme,
     );
     if (prepared == null) return null;
     return PreparedImage.fromJpeg(prepared);
