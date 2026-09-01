@@ -20,6 +20,7 @@ class ImagePrepareLabels {
     this.quality = 'JPEG quality (1–100)',
     this.rotateLeft = 'Rotate left',
     this.rotateRight = 'Rotate right',
+    this.matchOrientation = 'Match this orientation',
     this.errorMaxDimension = 'Enter max dimension in px',
     this.errorQuality = 'Quality must be 1–100',
   });
@@ -34,6 +35,7 @@ class ImagePrepareLabels {
   final String quality;
   final String rotateLeft;
   final String rotateRight;
+  final String matchOrientation;
   final String errorMaxDimension;
   final String errorQuality;
 }
@@ -44,9 +46,18 @@ class ImagePrepareTheme {
     this.labels = const ImagePrepareLabels(),
     this.cancelButtonBuilder,
     this.confirmButtonBuilder,
+    this.showResizeAndCompress = true,
+    this.orientationGuide,
   });
 
   final ImagePrepareLabels labels;
   final ImagePrepareButtonBuilder? cancelButtonBuilder;
   final ImagePrepareButtonBuilder? confirmButtonBuilder;
+
+  /// When false, the sheet is rotate + confirm only. JPEG still uses
+  /// [kDefaultMaxDimension] / [kDefaultJpegQuality] (or the picker's values).
+  final bool showResizeAndCompress;
+
+  /// Optional example image shown above the user preview so they can match orientation.
+  final ImageProvider? orientationGuide;
 }

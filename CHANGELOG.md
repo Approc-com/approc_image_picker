@@ -1,3 +1,7 @@
+# 1.1.1
+
+- `ImagePrepareTheme.showResizeAndCompress` — hide resize/compress; JPEG still uses 3000px / quality 98
+
 # 1.1.0
 
 - Prepare sheet follows host `ThemeData`

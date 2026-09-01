@@ -121,6 +121,24 @@ class _ImagePrepareSheetState extends State<ImagePrepareSheet> {
           children: [
             Text(labels.title, style: theme.textTheme.titleLarge),
             const SizedBox(height: 12),
+            if (widget.theme.orientationGuide case final guide?) ...[
+              Text(
+                labels.matchOrientation,
+                textAlign: TextAlign.center,
+                style: muted,
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: ColoredBox(
+                  color: colors.surfaceContainerHighest,
+                  child: Center(
+                    child: Image(image: guide, height: 88, fit: BoxFit.contain),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: ColoredBox(
@@ -154,31 +172,33 @@ class _ImagePrepareSheetState extends State<ImagePrepareSheet> {
                 ),
               ],
             ),
-            SegmentedButton<ImagePrepareOp>(
-              emptySelectionAllowed: true,
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment(value: ImagePrepareOp.resize, label: Text(labels.resize), icon: const Icon(Icons.photo_size_select_large)),
-                ButtonSegment(value: ImagePrepareOp.compress, label: Text(labels.compress), icon: const Icon(Icons.compress)),
+            if (widget.theme.showResizeAndCompress) ...[
+              SegmentedButton<ImagePrepareOp>(
+                emptySelectionAllowed: true,
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(value: ImagePrepareOp.resize, label: Text(labels.resize), icon: const Icon(Icons.photo_size_select_large)),
+                  ButtonSegment(value: ImagePrepareOp.compress, label: Text(labels.compress), icon: const Icon(Icons.compress)),
+                ],
+                selected: _op == ImagePrepareOp.none ? const {} : {_op},
+                onSelectionChanged: (next) {
+                  if (_busy) return;
+                  setState(() {
+                    _op = next.isEmpty ? ImagePrepareOp.none : next.first;
+                    _error = null;
+                  });
+                },
+              ),
+              if (_op == ImagePrepareOp.resize) ...[
+                const SizedBox(height: 12),
+                _NumField(controller: _maxDim, label: labels.maxDimension, enabled: !_busy),
+                const SizedBox(height: 6),
+                Text(labels.maxDimensionHint, style: muted.copyWith(fontSize: 12)),
               ],
-              selected: _op == ImagePrepareOp.none ? const {} : {_op},
-              onSelectionChanged: (next) {
-                if (_busy) return;
-                setState(() {
-                  _op = next.isEmpty ? ImagePrepareOp.none : next.first;
-                  _error = null;
-                });
-              },
-            ),
-            if (_op == ImagePrepareOp.resize) ...[
-              const SizedBox(height: 12),
-              _NumField(controller: _maxDim, label: labels.maxDimension, enabled: !_busy),
-              const SizedBox(height: 6),
-              Text(labels.maxDimensionHint, style: muted.copyWith(fontSize: 12)),
-            ],
-            if (_op == ImagePrepareOp.compress) ...[
-              const SizedBox(height: 12),
-              _NumField(controller: _quality, label: labels.quality, enabled: !_busy),
+              if (_op == ImagePrepareOp.compress) ...[
+                const SizedBox(height: 12),
+                _NumField(controller: _quality, label: labels.quality, enabled: !_busy),
+              ],
             ],
             if (_error case final error?) ...[
               const SizedBox(height: 8),

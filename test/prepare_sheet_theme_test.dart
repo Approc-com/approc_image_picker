@@ -83,4 +83,48 @@ void main() {
     expect(find.byType(FilledButton), findsNothing);
     expect(find.byType(OutlinedButton), findsNothing);
   });
+
+  testWidgets('hides resize and compress when showResizeAndCompress is false', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        ImagePrepareSheet(
+          bytes: _jpeg(),
+          theme: const ImagePrepareTheme(showResizeAndCompress: false),
+        ),
+      ),
+    );
+
+    expect(find.text('Resize'), findsNothing);
+    expect(find.text('Compress'), findsNothing);
+    expect(find.text('Use image'), findsOneWidget);
+    expect(find.byTooltip('Rotate left'), findsOneWidget);
+  });
+
+  testWidgets('shows orientation guide above the user preview when provided', (
+    tester,
+  ) async {
+    final guide = MemoryImage(_jpeg());
+    await tester.pumpWidget(
+      _app(
+        ImagePrepareSheet(
+          bytes: _jpeg(),
+          theme: ImagePrepareTheme(
+            orientationGuide: guide,
+            labels: const ImagePrepareLabels(
+              matchOrientation: 'Match this orientation',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Match this orientation'), findsOneWidget);
+    expect(find.image(guide), findsOneWidget);
+  });
+
+  testWidgets('hides orientation guide when not provided', (tester) async {
+    await tester.pumpWidget(_app(ImagePrepareSheet(bytes: _jpeg())));
+
+    expect(find.text('Match this orientation'), findsNothing);
+  });
 }

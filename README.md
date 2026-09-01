@@ -8,7 +8,7 @@ Defaults:
 - JPEG quality **98**
 - EXIF orientation is applied to **pixels** before save (OCR-safe)
 
-The prepare sheet follows the host `ThemeData`. Pass `ImagePrepareTheme` to localize copy or use the app’s own buttons.
+The prepare sheet follows the host `ThemeData`. Pass `ImagePrepareTheme` to localize copy, use the app’s own buttons, or hide resize/compress (`showResizeAndCompress: false`). JPEG still uses 3000px / quality 98.
 
 ## Install
 
