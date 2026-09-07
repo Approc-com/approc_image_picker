@@ -9,7 +9,7 @@ import 'prepare_jpeg.dart';
 import 'prepare_sheet.dart';
 import 'prepare_theme.dart';
 
-/// Camera or gallery. Cropping is handled by the document scanner.
+/// Camera or gallery. Capture then manual corner crop (no live auto-detect).
 enum PreparedImageSource { camera, gallery }
 
 /// JPEG result after crop + prepare. [extension] is always `jpg`.
@@ -75,16 +75,21 @@ class ApprocImagePicker {
     return PreparedImage.fromJpeg(prepared);
   }
 
-  /// Document scan + crop only, no prepare sheet.
+  /// Capture + manual corner crop only, no prepare sheet.
+  ///
+  /// Keeps color: Android uses [AndroidScannerMode.base] (no ML Kit enhance /
+  /// B&W filter). The vendored scanner also skips the GMS camera UI entirely.
   Future<Uint8List?> scan(PreparedImageSource source) async {
     final paths = await CunningDocumentScanner.getPictures(
       noOfPages: 1,
       scannerSource: source == PreparedImageSource.camera
           ? ScannerSource.camera
           : ScannerSource.gallery,
+      androidScannerMode: AndroidScannerMode.base,
       iosScannerOptions: IosScannerOptions(
         imageFormat: IosImageFormat.jpg,
         jpgCompressionQuality: 0.85,
+        defaultFilter: IosDocumentFilter.original,
         showFilterBar: false,
       ),
     );

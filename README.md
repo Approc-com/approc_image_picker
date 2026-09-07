@@ -2,6 +2,8 @@
 
 Pick a photo (camera or gallery), crop the document, then rotate / resize / compress. Output is always **JPEG** (`.jpg`).
 
+**Capture flow:** camera or gallery → **manual corner crop** (drag handles) → prepare sheet. There is no live auto-detect border overlay; camera captures with the system camera, then opens the same cropper as gallery.
+
 Defaults:
 
 - Longest side **3000px** (never upscales, keeps aspect ratio)
@@ -14,18 +16,13 @@ The prepare sheet follows the host `ThemeData`. Pass `ImagePrepareTheme` to loca
 
 ```yaml
 dependencies:
-  approc_image_picker: ^1.1.0
-```
-
-Until it is on pub.dev, use a path or git dependency:
-
-```yaml
-dependencies:
   approc_image_picker:
     path: packages/approc_image_picker
 ```
 
-Host app still needs camera permission (`cunning_document_scanner`):
+This package vendors a forked `cunning_document_scanner` (path dependency). Host apps that also declare `cunning_document_scanner` should override to the same fork, or omit it and rely on this package’s transitive path.
+
+Host app still needs camera permission:
 
 - Android `minSdk` ≥ 24 and `CAMERA` in the manifest
 - iOS deployment target ≥ 13 and `NSCameraUsageDescription` in `Info.plist`
@@ -138,10 +135,6 @@ final jpeg = await showImagePrepareSheet(
 
 `ImagePrepareButtonBuilder` is `(BuildContext context, VoidCallback? onPressed, bool busy)`. `onPressed` is `null` while the sheet is busy.
 
-## Publish
+## Consume from a host app
 
-```bash
-cd packages/approc_image_picker
-dart pub publish --dry-run
-dart pub publish
-```
+Use a path (or git) dependency. This package is not published to pub.dev because it depends on the vendored scanner fork.
