@@ -3,6 +3,7 @@
 - Camera uses the same manual corner cropper as gallery (no live auto-detect borders)
 - Vendors a forked `cunning_document_scanner` under `packages/cunning_document_scanner`
 - Keep color on Android camera: skip ML Kit enhance/B&W (`AndroidScannerMode.base` + fallback decode as ARGB_8888)
+- Prepare sheet runs JPEG work off the UI thread so Use image can show loading
 
 # 1.1.1
 

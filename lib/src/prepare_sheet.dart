@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
@@ -25,6 +26,27 @@ Future<Uint8List?> showImagePrepareSheet(
       theme: theme,
     ),
   );
+}
+
+Uint8List _prepareJpegIsolate(_PrepareJpegJob job) => prepareJpeg(
+      job.bytes,
+      quarterTurns: job.turns,
+      maxDimension: job.maxDimension,
+      quality: job.quality,
+    );
+
+class _PrepareJpegJob {
+  const _PrepareJpegJob({
+    required this.bytes,
+    required this.turns,
+    required this.maxDimension,
+    required this.quality,
+  });
+
+  final Uint8List bytes;
+  final int turns;
+  final int maxDimension;
+  final int quality;
 }
 
 /// Prepare-sheet UI. Prefer [showImagePrepareSheet] or [ApprocImagePicker.pick].
@@ -76,7 +98,7 @@ class _ImagePrepareSheetState extends State<ImagePrepareSheet> {
   int get _viewW => _turns.isOdd ? _srcH : _srcW;
   int get _viewH => _turns.isOdd ? _srcW : _srcH;
 
-  void _use() {
+  Future<void> _use() async {
     if (_busy) return;
     var maxDimension = widget.maxDimension;
     var quality = widget.jpegQuality;
@@ -94,15 +116,29 @@ class _ImagePrepareSheetState extends State<ImagePrepareSheet> {
       }
     }
 
-    setState(() => _busy = true);
-    final out = prepareJpeg(
-      widget.bytes,
-      quarterTurns: _turns,
-      maxDimension: maxDimension,
-      quality: quality,
-    );
-    if (!mounted) return;
-    Navigator.of(context).pop(out);
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    // Let the loading state paint before the JPEG work starts.
+    await WidgetsBinding.instance.endOfFrame;
+
+    try {
+      final out = await compute(
+        _prepareJpegIsolate,
+        _PrepareJpegJob(
+          bytes: widget.bytes,
+          turns: _turns,
+          maxDimension: maxDimension,
+          quality: quality,
+        ),
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop(out);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+    }
   }
 
   @override

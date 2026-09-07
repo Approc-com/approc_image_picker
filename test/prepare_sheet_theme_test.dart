@@ -127,4 +127,14 @@ void main() {
 
     expect(find.text('Match this orientation'), findsNothing);
   });
+
+  testWidgets('Use image shows loading while JPEG prepares', (tester) async {
+    await tester.pumpWidget(_app(ImagePrepareSheet(bytes: _jpeg())));
+
+    await tester.tap(find.text('Use image'));
+    await tester.pump(); // busy=true
+    await tester.pump(); // after endOfFrame
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
 }
