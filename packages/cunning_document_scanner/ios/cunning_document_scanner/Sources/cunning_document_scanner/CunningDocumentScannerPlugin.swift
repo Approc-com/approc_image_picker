@@ -27,8 +27,8 @@ public class CunningDocumentScannerPlugin: NSObject,
     /// A `FlutterResult` must be invoked exactly once, so it is consumed rather than reused.
     var resultChannel: FlutterResult?
 
-    /// The native VNDocumentCameraViewController presenting instance.
-    var presentingController: VNDocumentCameraViewController?
+    /// The presented camera or document UI (system camera picker, or legacy VisionKit controller).
+    var presentingController: UIViewController?
     
     /// The options passed from the Dart/Flutter side.
     var scannerOptions = CunningScannerOptions()
