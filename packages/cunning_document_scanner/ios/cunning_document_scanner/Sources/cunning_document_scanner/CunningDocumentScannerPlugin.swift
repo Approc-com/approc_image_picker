@@ -219,6 +219,9 @@ public class CunningDocumentScannerPlugin: NSObject,
 
             let picker = PHPickerViewController(configuration: configuration)
             picker.delegate = self
+            // A swipe-down dismissal never calls `picker(_:didFinishPicking:)`, which would
+            // strand the result and lock the plugin as ALREADY_ACTIVE for the whole process.
+            picker.presentationController?.delegate = self
             presentedVC.present(picker, animated: true)
         } else {
             let picker = UIImagePickerController()
@@ -488,8 +491,14 @@ extension CunningDocumentScannerPlugin: UIAdaptivePresentationControllerDelegate
     ///
     /// UIKit calls this both for that gesture-driven dismissal and for the one that follows
     /// tapping Camera or Gallery, so `isHandlingAlertAction` is checked to ignore the latter.
+    /// This also covers a swipe-dismissed photo picker (PHPickerViewController).
     /// `finish` is a no-op once the result has already been delivered.
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        if #available(iOS 14.0, *),
+           presentationController.presentedViewController is PHPickerViewController {
+            finish(nil)
+            return
+        }
         if isHandlingAlertAction {
             isHandlingAlertAction = false
             return
